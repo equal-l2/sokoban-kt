@@ -1,9 +1,16 @@
-fun main(args:Array<String>) = Sokoban.run();
+fun main(args:Array<String>){
+  Sokoban.setStageInfo(1);
+  while(true){
+    Sokoban.printAllCells();
+    Sokoban.inputMoveInfo();
+    Sokoban.movePlayer();
+  }
+}
 
 object Sokoban {
   lateinit var stages:Array<Array<Int>>;
   var maxLength:Int = 0;
-  var cellStr:Array<String> = arrayOf("  ", MyConsole.BG_BLUE+"++"+MyConsole.RESET, MyConsole.BG_RED+MyConsole.TEXT_WHITE+"PL"+MyConsole.RESET, "EN", "GO");
+  var cellStr:Array<String> = arrayOf("  ", MyConsole.BG_BLUE+"++"+MyConsole.RESET, MyConsole.BG_RED+MyConsole.FG_WHITE+"PL"+MyConsole.RESET, "EN", "GO");
   var playerX:Int = 0;
   var playerY:Int = 0;
   var locateX:Int = 0;
@@ -13,16 +20,6 @@ object Sokoban {
   var stageXSize:Int = 0;
   var stageYSize:Int = 0;
 
-  fun run(){
-    setStageInfo(1);
-    while(true){
-      printAllCells();
-      inputMoveInfo();
-      if (canMove()){
-        movePlayer();
-      }
-    }
-  }
 
   fun printAllCells() {
     MyConsole.clearScreen();
@@ -76,15 +73,17 @@ object Sokoban {
   }
 
   fun inputMoveInfo(){
-    MyConsole.locateCursor(1,15);
-    System.out.print("WASD: ");
     var buf:String = "";
     moveX = 0;
     moveY = 0;
-    while(!buf.equals("W") && !buf.equals("w") &&
-          !buf.equals("S") && !buf.equals("s") &&
-          !buf.equals("A") && !buf.equals("a") &&
-          !buf.equals("D") && !buf.equals("d") ){
+    MyConsole.locateCursor(1,15);
+    print("WASD: ");
+    while(!(
+      buf.equals("W") || buf.equals("w") ||
+      buf.equals("S") || buf.equals("s") ||
+      buf.equals("A") || buf.equals("a") ||
+      buf.equals("D") || buf.equals("d") )
+    ){
       buf = readLine()?:"";
     }
 
@@ -102,7 +101,9 @@ object Sokoban {
   }
 
   fun movePlayer(){
-    playerX += moveX;
-    playerY += moveY;
+    if(canMove()){
+      playerX += moveX;
+      playerY += moveY;
+    }
   }
 }
