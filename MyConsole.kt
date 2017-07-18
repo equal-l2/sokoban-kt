@@ -27,10 +27,6 @@ object MyConsole {
   val BG_WHITE     = ES + "47m";
   val BG_DEFAULT   = ES + "49m";
 
-  fun setColor(com:String) = print(com);
-
-  fun resetColor() = print(RESET);
-
   fun clearScreen(){
     print(CLEAR);
     locateCursor(1,1);
@@ -41,16 +37,9 @@ object MyConsole {
     if (x<0) leftCursor(-x); else rightCursor(x);
   }
 
-  fun upCursor(y:Int)    = print(ES + y + "A");
-
-  fun downCursor(y:Int)  = print(ES + y + "B");
-
-  fun rightCursor(x:Int) = print(ES + x + "C");
-
-  fun leftCursor(x:Int)  = print(ES + x + "D");
-
+  fun upCursor(y:Int)            = print(ES + y + "A");
+  fun downCursor(y:Int)          = print(ES + y + "B");
+  fun rightCursor(x:Int)         = print(ES + x + "C");
+  fun leftCursor(x:Int)          = print(ES + x + "D");
   fun locateCursor(x:Int, y:Int) = print(ES + y + ";" + x + "H");
-
-  fun inputKeyboard():String = readLine()?:"";
-
 }

@@ -61,12 +61,12 @@ object Sokoban {
 
   fun printCell(x:Int, y:Int) {
     setLocation(x,y);
-    System.out.print(cellStr[stages[y][x]]);
+    print(cellStr[stages[y][x]]);
   }
 
   fun printPlayer(x:Int, y:Int) {
     setLocation(x,y);
-    System.out.print(cellStr[2]);
+    print(cellStr[2]);
   }
 
   fun setLocation(x:Int, y:Int){
@@ -85,7 +85,7 @@ object Sokoban {
           !buf.equals("S") && !buf.equals("s") &&
           !buf.equals("A") && !buf.equals("a") &&
           !buf.equals("D") && !buf.equals("d") ){
-      buf = MyConsole.inputKeyboard();
+      buf = readLine()?:"";
     }
 
     if      (buf.equals("W") || buf.equals("w")) moveY = -1;
@@ -102,7 +102,7 @@ object Sokoban {
   }
 
   fun movePlayer(){
-    playerX = playerX + moveX;
-    playerY = playerY + moveY;
+    playerX += moveX;
+    playerY += moveY;
   }
 }
