@@ -8,7 +8,21 @@ fun main(args:Array<String>){
 }
 
 object Sokoban {
-  lateinit var stages:Array<Array<Int>>;
+
+  class Stage(var map:Array<Array<Int>>, val xSize:Int, val ySize:Int){
+    init{
+      if(map.size != xSize){
+        throw IllegalArgumentException(String.format("xSize differs. map:%d xSize:%d",map.size,xSize))
+      }
+      for(a in map){
+        if(a.size != ySize){
+          throw IllegalArgumentException(String.format("ySize differs. map:%d ySize:%d",map.size,ySize))
+        }
+      }
+    }
+  }
+
+  lateinit var stage:Stage;
   var maxLength:Int = 0;
   var cellStr:Array<String> = arrayOf(
       "  ",                                                     // empty
@@ -23,14 +37,11 @@ object Sokoban {
   var locateY:Int = 0;
   var moveX:Int = 0;
   var moveY:Int = 0;
-  var stageXSize:Int = 0;
-  var stageYSize:Int = 0;
-
 
   fun printAllCells() {
     MyConsole.clearScreen();
-    for (y in 0 until stageYSize){
-      for (x in 0 until stageXSize){
+    for (y in 0 until stage.ySize){
+      for (x in 0 until stage.xSize){
         if (x == playerX && y == playerY) {
           printPlayer(x,y);
         } else{
@@ -40,31 +51,32 @@ object Sokoban {
     }
   }
 
-  fun setStageInfo(stage:Int) {
-    if (stage==1) {
-      val stagesBuf = arrayOf(
-        arrayOf(1, 1, 1, 1, 1, 1, 1, 1, 1, 1),
-        arrayOf(1, 0, 0, 0, 0, 0, 0, 0, 0, 1),
-        arrayOf(1, 0, 1, 0, 1, 0, 1, 1, 0, 1),
-        arrayOf(1, 0, 1, 0, 1, 0, 0, 0, 0, 1),
-        arrayOf(1, 0, 0, 0, 0, 0, 1, 1, 0, 1),
-        arrayOf(1, 0, 1, 1, 1, 0, 1, 1, 0, 1),
-        arrayOf(1, 0, 1, 0, 1, 0, 0, 0, 0, 1),
-        arrayOf(1, 0, 1, 0, 1, 0, 1, 1, 0, 1),
-        arrayOf(1, 0, 0, 0, 0, 0, 0, 0, 0, 1),
-        arrayOf(1, 1, 1, 1, 1, 1, 1, 1, 1, 1)
+  fun setStageInfo(stageNum:Int) {
+    if (stageNum==1) {
+      stage = Stage(
+        arrayOf(
+          arrayOf(1, 1, 1, 1, 1, 1, 1, 1, 1, 1),
+          arrayOf(1, 0, 0, 0, 0, 0, 0, 0, 0, 1),
+          arrayOf(1, 0, 1, 0, 1, 0, 1, 1, 0, 1),
+          arrayOf(1, 0, 1, 0, 1, 0, 0, 0, 0, 1),
+          arrayOf(1, 0, 0, 0, 0, 0, 1, 1, 0, 1),
+          arrayOf(1, 0, 1, 1, 1, 0, 1, 1, 0, 1),
+          arrayOf(1, 0, 1, 0, 1, 0, 0, 0, 0, 1),
+          arrayOf(1, 0, 1, 0, 1, 0, 1, 1, 0, 1),
+          arrayOf(1, 0, 0, 0, 0, 0, 0, 0, 0, 1),
+          arrayOf(1, 1, 1, 1, 1, 1, 1, 1, 1, 1)
+        ),
+        10,
+        10
       );
-      stages = stagesBuf;
       playerX = 1;
       playerY = 1;
-      stageXSize = 10;
-      stageYSize = 10;
     }
   }
 
   fun printCell(x:Int, y:Int) {
     setLocation(x,y);
-    print(cellStr[stages[y][x]]);
+    print(cellStr[stage.map[y][x]]);
   }
 
   fun printPlayer(x:Int, y:Int) {
@@ -100,9 +112,9 @@ object Sokoban {
   }
 
   fun canMove():Boolean{
-    if (playerX + moveX < 0 || playerX + moveX >= stageXSize) return false;
-    if (playerY + moveY < 0 || playerY + moveY >= stageYSize) return false;
-    if (stages[playerY+moveY][playerX+moveX]==1) return false;
+    if (playerX + moveX < 0 || playerX + moveX >= stage.xSize) return false;
+    if (playerY + moveY < 0 || playerY + moveY >= stage.ySize) return false;
+    if (stage.map[playerY+moveY][playerX+moveX]==1) return false;
     return true;
   }
 
