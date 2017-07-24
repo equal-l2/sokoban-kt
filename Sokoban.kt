@@ -10,7 +10,13 @@ fun main(args:Array<String>){
 object Sokoban {
   lateinit var stages:Array<Array<Int>>;
   var maxLength:Int = 0;
-  var cellStr:Array<String> = arrayOf("  ", MyConsole.BG_BLUE+"++"+MyConsole.RESET, MyConsole.BG_RED+MyConsole.FG_WHITE+"PL"+MyConsole.RESET, "EN", "GO");
+  var cellStr:Array<String> = arrayOf(
+      "  ",                                                     // empty
+      MyConsole.BG_BLUE+"++"+MyConsole.RESET,                   // wall
+      MyConsole.BG_RED+MyConsole.FG_WHITE+"PL"+MyConsole.RESET, // player
+      "CR",                                                     // crate
+      "DS"                                                      // destination
+  );
   var playerX:Int = 0;
   var playerY:Int = 0;
   var locateX:Int = 0;
