@@ -33,8 +33,6 @@ object Sokoban {
   );
   var playerX:Int = 0;
   var playerY:Int = 0;
-  var locateX:Int = 0;
-  var locateY:Int = 0;
   var moveX:Int = 0;
   var moveY:Int = 0;
 
@@ -85,8 +83,8 @@ object Sokoban {
   }
 
   fun setLocation(x:Int, y:Int){
-    locateX = x * 2 + 3;
-    locateY = y + 2;
+    val locateX = x * 2 + 3;
+    val locateY = y + 2;
     MyConsole.locateCursor( locateX, locateY );
   }
 
