@@ -9,7 +9,7 @@ fun main(args:Array<String>){
 
 object Sokoban {
 
-  class Stage(var map:Array<Array<Int>>, val xSize:Int, val ySize:Int){
+  class Stage(val map:Array<Array<Int>>, val xSize:Int, val ySize:Int){
     init{
       if(map.size != xSize){
         throw IllegalArgumentException(String.format("xSize differs. map:%d xSize:%d",map.size,xSize))
