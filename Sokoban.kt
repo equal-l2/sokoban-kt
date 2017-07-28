@@ -9,11 +9,12 @@ fun main(args:Array<String>){
 
 object Sokoban {
 
-  class Stage(val map:Array<Array<Int>>, val xSize:Int, val ySize:Int){
+  class Stage(val map:Array<Array<Int>>){
+    val xSize:Int;
+    val ySize:Int;
     init{
-      if(map.size != xSize){
-        throw IllegalArgumentException(String.format("xSize differs. map:%d xSize:%d",map.size,xSize))
-      }
+      xSize = map.size;
+      ySize = map[0].size;
       for(a in map){
         if(a.size != ySize){
           throw IllegalArgumentException(String.format("ySize differs. map:%d ySize:%d",map.size,ySize))
@@ -63,9 +64,7 @@ object Sokoban {
           arrayOf(1, 0, 1, 0, 1, 0, 1, 1, 0, 1),
           arrayOf(1, 0, 0, 0, 0, 0, 0, 0, 0, 1),
           arrayOf(1, 1, 1, 1, 1, 1, 1, 1, 1, 1)
-        ),
-        10,
-        10
+        )
       );
       playerX = 1;
       playerY = 1;
