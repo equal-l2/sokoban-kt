@@ -9,65 +9,85 @@ fun main(args:Array<String>){
 
 object Sokoban {
 
-  class Stage(val map:Array<Array<Int>>){
-    val xSize:Int;
-    val ySize:Int;
+  class Stage(val map: Array<Array<Int>>, var stageObjs: Array<StageObj>){
+    class StageObj(var x:Int, var y:Int, val dispStr:String);
+    val x:Int;
+    val y:Int;
+    var player = stageObjs[0];
     init{
-      xSize = map.size;
-      ySize = map[0].size;
+      x = map[0].size;
+      y = map.size;
       for(a in map){
-        if(a.size != ySize){
-          throw IllegalArgumentException(String.format("ySize differs. map:%d ySize:%d",map.size,ySize))
+        if(a.size != x){
+          throw IllegalArgumentException(String.format("y differs. map:%d y:%d",map.size,y))
         }
       }
+      for(o in stageObjs){
+        if ( o.x < 0 || o.x >= x) throw IllegalArgumentException(String.format("Object is out of bound. map:%d obj:%d",x,o.x))
+        if ( o.y < 0 || o.y >= y) throw IllegalArgumentException(String.format("Object is out of bound. map:%d obj:%d",y,o.y))
+      }
+    }
+
+    fun findCrate(x: Int, y: Int): Int {
+      for(i in 1 until stageObjs.size){
+        if(stageObjs[i].x == x && stageObjs[i].y == y) return i;
+      }
+      return -1;
+    }
+    companion object{
+      fun getPlayerObj(x: Int, y: Int): StageObj = StageObj(x,y,ANSI.BG_RED+ANSI.FG_WHITE+"PL"+ANSI.RESET);
+      fun getCrateObj(x: Int, y: Int): StageObj  = StageObj(x,y,ANSI.BG_YELLOW+ANSI.FG_WHITE+"CR"+ANSI.RESET);
     }
   }
+
 
   lateinit var stage:Stage;
   var maxLength:Int = 0;
   var cellStr:Array<String> = arrayOf(
-      "  ",                                                     // empty
-      ANSI.BG_BLUE+"++"+ANSI.RESET,                   // wall
-      ANSI.BG_RED+ANSI.FG_WHITE+"PL"+ANSI.RESET, // player
-      "CR",                                                     // crate
-      "DS"                                                      // destination
+      "  ",                         // empty
+      ANSI.BG_BLUE+"++"+ANSI.RESET, // wall
+      "DS"                          // destination
   );
-  var playerX:Int = 0;
-  var playerY:Int = 0;
-  var moveX:Int = 0;
-  var moveY:Int = 0;
+
+  var moveX: Int = 0;
+  var moveY: Int = 0;
+  var moveCrate: Int = 0;
 
   fun printAllCells() {
     ANSI.clearScreen();
-    for (y in 0 until stage.ySize){
-      for (x in 0 until stage.xSize){
-        if (x == playerX && y == playerY) {
-          printPlayer(x,y);
-        } else{
-          printCell(x,y);
-        }
+    for (y in 0 until stage.y){
+      for (x in 0 until stage.x){
+        printCell(x,y);
       }
+    }
+    for (o in stage.stageObjs){
+      printObj(o);
     }
   }
 
   fun setStageInfo(stageNum:Int) {
+    // stage objects
+    // 0 : empty
+    // 1 : wall
+    // 2 : destination
     if (stageNum==1) {
       stage = Stage(
         arrayOf(
-          arrayOf(1, 1, 1, 1, 1, 1, 1, 1, 1, 1),
-          arrayOf(1, 0, 0, 0, 0, 0, 0, 0, 0, 1),
-          arrayOf(1, 0, 1, 0, 1, 0, 1, 1, 0, 1),
-          arrayOf(1, 0, 1, 0, 1, 0, 0, 0, 0, 1),
-          arrayOf(1, 0, 0, 0, 0, 0, 1, 1, 0, 1),
-          arrayOf(1, 0, 1, 1, 1, 0, 1, 1, 0, 1),
-          arrayOf(1, 0, 1, 0, 1, 0, 0, 0, 0, 1),
-          arrayOf(1, 0, 1, 0, 1, 0, 1, 1, 0, 1),
-          arrayOf(1, 0, 0, 0, 0, 0, 0, 0, 0, 1),
-          arrayOf(1, 1, 1, 1, 1, 1, 1, 1, 1, 1)
+          arrayOf(1, 1, 1, 1, 1, 1),
+          arrayOf(1, 1, 1, 0, 0, 1),
+          arrayOf(1, 1, 1, 0, 0, 1),
+          arrayOf(1, 0, 0, 2, 0, 1),
+          arrayOf(1, 0, 0, 0, 0, 1),
+          arrayOf(1, 1, 1, 0, 2, 1),
+          arrayOf(1, 1, 1, 0, 0, 1),
+          arrayOf(1, 1, 1, 1, 1, 1)
+        ),
+        arrayOf(
+            Stage.getPlayerObj(3,4),
+            Stage.getCrateObj(2,3),
+            Stage.getCrateObj(3,5)
         )
       );
-      playerX = 1;
-      playerY = 1;
     }
   }
 
@@ -76,9 +96,9 @@ object Sokoban {
     print(cellStr[stage.map[y][x]]);
   }
 
-  fun printPlayer(x:Int, y:Int) {
-    setLocation(x,y);
-    print(cellStr[2]);
+  fun printObj(o: Stage.StageObj) {
+    setLocation(o.x,o.y);
+    print(o.dispStr);
   }
 
   fun setLocation(x:Int, y:Int){
@@ -89,8 +109,6 @@ object Sokoban {
 
   fun inputMoveInfo(){
     var buf:String = "";
-    moveX = 0;
-    moveY = 0;
     ANSI.locateCursor(1,15);
     print("WASD: ");
     while(!(
@@ -108,17 +126,35 @@ object Sokoban {
     else if (buf.equals("D") || buf.equals("d")) moveX =  1;
   }
 
-  fun canMove():Boolean{
-    if (playerX + moveX < 0 || playerX + moveX >= stage.xSize) return false;
-    if (playerY + moveY < 0 || playerY + moveY >= stage.ySize) return false;
-    if (stage.map[playerY+moveY][playerX+moveX]==1) return false;
+  fun canMove(o: Stage.StageObj, isPlayer: Boolean): Boolean {
+    val toX = o.x + moveX;
+    val toY = o.y + moveY;
+    if ( toX < 0 || toX >= stage.x) return false;
+    if ( toY < 0 || toY >= stage.y) return false;
+    if (stage.map[toY][toX]==1)     return false;
+    val crate = stage.findCrate(toX, toY)
+    if (crate != -1){
+      if(!isPlayer) return false;
+      else{
+        moveCrate = crate;
+        return canMove(stage.stageObjs[crate],false);
+      }
+    }
     return true;
   }
 
   fun movePlayer(){
-    if(canMove()){
-      playerX += moveX;
-      playerY += moveY;
+    if(canMove(stage.player,true)){
+      if(moveCrate != 0){
+        var crate = stage.stageObjs[moveCrate];
+        crate.x += moveX;
+        crate.y += moveY;
+      }
+      stage.player.x += moveX;
+      stage.player.y += moveY;
     }
+    moveX = 0;
+    moveY = 0;
+    moveCrate = 0;
   }
 }
