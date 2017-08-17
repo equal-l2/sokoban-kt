@@ -1,4 +1,4 @@
-object MyConsole {
+object ANSI{
   val ES           = "\u001b[";
   val CLEAR        = ES + "2J";
   val RESET        = ES + "0m";

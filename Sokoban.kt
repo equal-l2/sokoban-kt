@@ -27,8 +27,8 @@ object Sokoban {
   var maxLength:Int = 0;
   var cellStr:Array<String> = arrayOf(
       "  ",                                                     // empty
-      MyConsole.BG_BLUE+"++"+MyConsole.RESET,                   // wall
-      MyConsole.BG_RED+MyConsole.FG_WHITE+"PL"+MyConsole.RESET, // player
+      ANSI.BG_BLUE+"++"+ANSI.RESET,                   // wall
+      ANSI.BG_RED+ANSI.FG_WHITE+"PL"+ANSI.RESET, // player
       "CR",                                                     // crate
       "DS"                                                      // destination
   );
@@ -38,7 +38,7 @@ object Sokoban {
   var moveY:Int = 0;
 
   fun printAllCells() {
-    MyConsole.clearScreen();
+    ANSI.clearScreen();
     for (y in 0 until stage.ySize){
       for (x in 0 until stage.xSize){
         if (x == playerX && y == playerY) {
@@ -84,14 +84,14 @@ object Sokoban {
   fun setLocation(x:Int, y:Int){
     val locateX = x * 2 + 3;
     val locateY = y + 2;
-    MyConsole.locateCursor( locateX, locateY );
+    ANSI.locateCursor( locateX, locateY );
   }
 
   fun inputMoveInfo(){
     var buf:String = "";
     moveX = 0;
     moveY = 0;
-    MyConsole.locateCursor(1,15);
+    ANSI.locateCursor(1,15);
     print("WASD: ");
     while(!(
       buf.equals("W") || buf.equals("w") ||
