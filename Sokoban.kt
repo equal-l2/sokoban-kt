@@ -4,7 +4,9 @@ fun main(args:Array<String>){
     Sokoban.printAllCells();
     Sokoban.inputMoveInfo();
     Sokoban.movePlayer();
+    if(Sokoban.isCleared()) break;
   }
+  println("Congratulation!");
 }
 
 object Sokoban {
@@ -89,6 +91,17 @@ object Sokoban {
         )
       );
     }
+  }
+
+  fun isCleared(): Boolean {
+    for (y in 0 until stage.y){
+      for (x in 0 until stage.x){
+        if(stage.map[y][x] == 2){
+          if(stage.findCrate(x,y) == -1) return false;
+        }
+      }
+    }
+    return true;
   }
 
   fun printCell(x:Int, y:Int) {
