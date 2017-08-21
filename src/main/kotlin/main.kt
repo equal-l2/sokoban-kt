@@ -1,3 +1,6 @@
+package main
+import ansi.*
+
 fun main(args:Array<String>){
   Sokoban.setStageInfo(1);
   while(true){
@@ -37,8 +40,8 @@ object Sokoban {
       return -1;
     }
     companion object{
-      fun getPlayerObj(x: Int, y: Int): StageObj = StageObj(x,y,ANSI.BG_RED+ANSI.FG_WHITE+"PL"+ANSI.RESET);
-      fun getCrateObj(x: Int, y: Int): StageObj  = StageObj(x,y,ANSI.BG_YELLOW+ANSI.FG_WHITE+"CR"+ANSI.RESET);
+      fun getPlayerObj(x: Int, y: Int): StageObj = StageObj(x,y,ansi.BG_RED+ansi.FG_WHITE+"PL"+ansi.RESET);
+      fun getCrateObj(x: Int, y: Int): StageObj  = StageObj(x,y,ansi.BG_YELLOW+ansi.FG_WHITE+"CR"+ansi.RESET);
     }
   }
 
@@ -47,7 +50,7 @@ object Sokoban {
   var maxLength:Int = 0;
   var cellStr:Array<String> = arrayOf(
       "  ",                         // empty
-      ANSI.BG_BLUE+"++"+ANSI.RESET, // wall
+      ansi.BG_BLUE+"++"+ansi.RESET, // wall
       "DS"                          // destination
   );
 
@@ -56,7 +59,7 @@ object Sokoban {
   var moveCrate: Int = 0;
 
   fun printAllCells() {
-    ANSI.clearScreen();
+    ansi.clearScreen();
     for (y in 0 until stage.y){
       for (x in 0 until stage.x){
         printCell(x,y);
@@ -117,12 +120,12 @@ object Sokoban {
   fun setLocation(x:Int, y:Int){
     val locateX = x * 2 + 3;
     val locateY = y + 2;
-    ANSI.locateCursor( locateX, locateY );
+    ansi.locateCursor( locateX, locateY );
   }
 
   fun inputMoveInfo(){
     var buf:String = "";
-    ANSI.locateCursor(1,15);
+    ansi.locateCursor(1,15);
     print("WASD: ");
     while(!(
       buf.equals("W") || buf.equals("w") ||
