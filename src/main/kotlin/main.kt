@@ -23,10 +23,8 @@ object Sokoban {
     init{
       x = map[0].size;
       y = map.size;
-      for(a in map){
-        if(a.size != x){
-          throw IllegalArgumentException(String.format("y differs. map:%d y:%d",map.size,y));
-        }
+      if(map.any{ a -> a.size != x }){
+        throw IllegalArgumentException(String.format("y differs. map:%d y:%d",map.size,y));
       }
 
       var cntDest   = 0;
@@ -49,16 +47,16 @@ object Sokoban {
         }
       }
       if(cntDest < 1){
-        throw IllegalArgumentException(String.format("Dest should be 1 at least. dest:%d",cntDest));
+        throw IllegalArgumentException("Dest should be 1 at least. dest:$cntDest");
       }
       if(cntPlayer != 1){
-        throw IllegalArgumentException(String.format("Player should be only 1. player:%d",cntPlayer));
+        throw IllegalArgumentException("Player should be only 1. player:$cntPlayer");
       }
       if(cntCrate < 1){
-        throw IllegalArgumentException(String.format("Crate should be 1 at least. crate:%d",cntCrate));
+        throw IllegalArgumentException("Crate should be 1 at least. crate:$cntCrate");
       }
       if(cntDest != cntCrate){
-        throw IllegalArgumentException(String.format("Dests and crates don't match. dest:%d crate:%d",cntDest,cntCrate));
+        throw IllegalArgumentException("Dests and crates don't match. dest:$cntDest crate:$cntCrate");
       }
     }
     companion object{
@@ -72,19 +70,17 @@ object Sokoban {
 
   lateinit var stage:Stage;
 
-  var maxLength:Int = 0;
-
   var cellStr:Array<Array<String>> = arrayOf(
-      //(back,fore,str)
-      arrayOf("",              "",            "  "), // empty
-      arrayOf(ansi.BG_GREEN,   "",            "DS"), // destination
-      arrayOf(ansi.BG_RED,     "",            "PL"), // player
-      arrayOf(ansi.BG_YELLOW,  "",            "PL"), // player on dest.
-      arrayOf(ansi.BG_BLUE,    "",            "CR"), // crate.
-      arrayOf(ansi.BG_CYAN,    "",            "CR"), // crate on dest.
-      arrayOf("","",""),
-      arrayOf("","",""),
-      arrayOf(ansi.BG_MAGENTA, "",            "++")  // wall
+      //(background,string)
+      arrayOf("",              "  "), // empty
+      arrayOf(ansi.BG_GREEN,   "DS"), // destination
+      arrayOf(ansi.BG_BLUE,    "PL"), // player
+      arrayOf(ansi.BG_CYAN,    "PL"), // player on dest.
+      arrayOf(ansi.BG_RED,     "CR"), // crate.
+      arrayOf(ansi.BG_YELLOW,  "CR"), // crate on dest.
+      arrayOf("",""),
+      arrayOf("",""),
+      arrayOf(ansi.BG_MAGENTA, "++")  // wall
   );
 
   var moveX = 0;
@@ -111,7 +107,7 @@ object Sokoban {
     // 0b0110 (6): (not in use)
     // 0b0111 (7): (not in use)
     // 0b1000 (8): wall
-    if (stageNum==1) {
+    if(stageNum==1) {
       stage = Stage(
           arrayOf(
               arrayOf(8, 8, 8, 8, 8, 8),
@@ -127,58 +123,42 @@ object Sokoban {
     }
   }
 
-  fun isCleared(): Boolean {
-    for (yObj in stage.map){
-      for (xObj in yObj){
-        if(xObj == Stage.CRATE) return false;
-      }
-    }
-    return true;
-  }
+  fun isCleared() = !stage.map.any{ y -> y.any{ x -> (x == Stage.CRATE) } };
 
-  fun getCellStr(kind:Int) = cellStr[kind].reduce{a,b -> a+b}+ansi.RESET;
+  fun getCellStr(kind:Int) = cellStr[kind].reduce{ x, y -> x+y } + ansi.RESET;
 
   fun printCell(x:Int, y:Int) {
     setLocation(x,y);
     print(getCellStr(stage.map[y][x]));
   }
 
-  fun setLocation(x:Int, y:Int){
-    val locateX = x * 2 + 3;
-    val locateY = y + 2;
-    ansi.locateCursor( locateX, locateY );
-  }
+  fun setLocation(x:Int, y:Int) = ansi.locateCursor( x * 2 + 3, y + 2 );
 
   fun inputMoveInfo(){
     var buf:String = "";
     ansi.locateCursor(1,15);
     print("WASD: ");
-    while(!(
-        buf.equals("W") || buf.equals("w") ||
-        buf.equals("S") || buf.equals("s") ||
-        buf.equals("A") || buf.equals("a") ||
-        buf.equals("D") || buf.equals("d") )
-    ){
+    while( arrayOf("w","a","s","d").none{ x -> buf.equals(x,true) } ){
       buf = readLine()?:"";
     }
 
-    if      (buf.equals("W") || buf.equals("w")) moveY = -1;
-    else if (buf.equals("S") || buf.equals("s")) moveY =  1;
-    else if (buf.equals("A") || buf.equals("a")) moveX = -1;
-    else if (buf.equals("D") || buf.equals("d")) moveX =  1;
+    if     (buf.equals("w",true)) moveY = -1;
+    else if(buf.equals("s",true)) moveY =  1;
+    else if(buf.equals("a",true)) moveX = -1;
+    else if(buf.equals("d",true)) moveX =  1;
   }
 
   fun canMove(x: Int, y: Int, objIsPlayer: Boolean): Boolean {
     val toX = x + moveX;
     val toY = y + moveY;
     val toObj = stage.map[toY][toX];
-    if (
+    if(
         (toX < 0 || toX >= stage.x) || // out-of-bound
         (toY < 0 || toY >= stage.y) || // out-of-bound
         (toObj == Stage.WALL)          /* you are in rock */
     ) return false;
 
-    if (toObj and Stage.CRATE != 0){
+    if(toObj and Stage.CRATE != 0){
       if(objIsPlayer){
         moveCrate = true;
         return canMove(toX,toY,false);
