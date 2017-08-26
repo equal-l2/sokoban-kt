@@ -2,6 +2,7 @@ package main
 /* ktlint-disable no-multi-spaces */
 /* ktlint-disable no-wildcard-imports */
 import ansi.*
+
 fun main(args: Array<String>) {
     Sokoban.setStageInfo(1)
     while (true) {
@@ -14,7 +15,6 @@ fun main(args: Array<String>) {
 }
 
 object Sokoban {
-
     class Stage(var map: Array<Array<Int>>) {
         val x: Int
         val y: Int
@@ -60,6 +60,20 @@ object Sokoban {
             }
         }
         companion object {
+            fun fromFile(fileName: String): Stage {
+                val mapFile = java.io.File(fileName).readLines()
+                return Stage(mapFile.map { y -> y.map { x -> Character.getNumericValue(x) }.toTypedArray() }.toTypedArray())
+            }
+            // stage objects are described as bit flags.
+            // 0b0000 (0): empty
+            // 0b0001 (1): destination
+            // 0b0010 (2): player
+            // 0b0011 (3): player on dest.
+            // 0b0100 (4): crate
+            // 0b0101 (5): crate on dest.
+            // 0b0110 (6): (not in use)
+            // 0b0111 (7): (not in use)
+            // 0b1000 (8): wall
             val EMPTY  = 0b0000
             val DEST   = 0b0001
             val PLAYER = 0b0010
@@ -76,7 +90,7 @@ object Sokoban {
             arrayOf(ansi.BG_GREEN,   "DS"), // destination
             arrayOf(ansi.BG_BLUE,    "PL"), // player
             arrayOf(ansi.BG_CYAN,    "PL"), // player on dest.
-            arrayOf(ansi.BG_RED,     "CR"), // crate.
+            arrayOf(ansi.BG_RED,     "CR"), // crate
             arrayOf(ansi.BG_YELLOW,  "CR"), // crate on dest.
             arrayOf("", ""),
             arrayOf("", ""),
@@ -97,30 +111,7 @@ object Sokoban {
     }
 
     fun setStageInfo(stageNum: Int) {
-        // stage objects are described as bit flags.
-        // 0b0000 (0): empty
-        // 0b0001 (1): destination
-        // 0b0010 (2): player
-        // 0b0011 (3): player on dest.
-        // 0b0100 (4): crate
-        // 0b0101 (5): crate on dest.
-        // 0b0110 (6): (not in use)
-        // 0b0111 (7): (not in use)
-        // 0b1000 (8): wall
-        if (stageNum == 1) {
-            stage = Stage(
-                    arrayOf(
-                            arrayOf(8, 8, 8, 8, 8, 8),
-                            arrayOf(8, 8, 8, 0, 0, 8),
-                            arrayOf(8, 8, 8, 0, 0, 8),
-                            arrayOf(8, 0, 4, 1, 0, 8),
-                            arrayOf(8, 0, 0, 2, 0, 8),
-                            arrayOf(8, 8, 8, 4, 1, 8),
-                            arrayOf(8, 8, 8, 0, 0, 8),
-                            arrayOf(8, 8, 8, 8, 8, 8)
-                    )
-            )
-        }
+        stage = Stage.fromFile("map/$stageNum.map")
     }
 
     fun isCleared() = !stage.map.any { y -> y.any { x -> (x == Stage.CRATE) } }
