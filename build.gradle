@@ -1,5 +1,6 @@
 plugins {
   id 'org.jetbrains.kotlin.jvm' version '1.1.4-2'
+  id 'org.jmailen.kotlinter' version '1.3.0'
 }
 
 defaultTasks 'jar'
@@ -14,7 +15,7 @@ dependencies{
 
 jar {
     manifest {
-        attributes 'Main-Class': "main.MainKt"
+        attributes 'Main-Class': 'main.MainKt'
     }
 
     from { configurations.compile.collect { it.isDirectory() ? it : zipTree(it) } }
