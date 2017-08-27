@@ -1,14 +1,13 @@
 package main
 /* ktlint-disable no-multi-spaces */
 /* ktlint-disable no-wildcard-imports */
-import ansi.*
 
 fun main(args: Array<String>) {
-    Sokoban.setStageInfo(1)
+    Sokoban.selectStage()
     while (true) {
         Sokoban.printAllCells()
         if (Sokoban.isCleared()) break
-        Sokoban.inputMoveInfo()
+        Sokoban.getInputForMove()
         Sokoban.movePlayer()
     }
     println("\nCongratulations!")
@@ -83,6 +82,7 @@ object Sokoban {
     }
 
     lateinit var stage: Stage
+    var stageNum: Int = 1;
 
     var cellStr = arrayOf(
             //(background,string)
@@ -110,10 +110,6 @@ object Sokoban {
         }
     }
 
-    fun setStageInfo(stageNum: Int) {
-        stage = Stage.fromFile("map/$stageNum.map")
-    }
-
     fun isCleared() = !stage.map.any { y -> y.any { x -> (x == Stage.CRATE) } }
 
     fun getCellStr(kind: Int) = cellStr[kind].reduce { x, y -> x+y } + ansi.RESET
@@ -125,7 +121,36 @@ object Sokoban {
 
     fun setLocation(x: Int, y: Int) = ansi.locateCursor( x * 2 + 3, y + 2 )
 
-    fun inputMoveInfo() {
+    fun readStage() : Boolean {
+        try {
+            stage = Stage.fromFile("map/$stageNum.map")
+            return true;
+        } catch (e: java.io.FileNotFoundException) {
+            println("map/$stageNum.map was not found")
+            return false;
+        }
+    }
+
+    fun selectStage() {
+        while (true) {
+            print("Select stage number (Ctrl+D to abort) : ")
+            val buf = readLine()
+            if (buf == null) {
+                println("EOF detected")
+                kotlin.system.exitProcess(0)
+            } else {
+                val num = buf.toIntOrNull()
+                if (num == null) {
+                    println("Supplied number is not valid")
+                } else {
+                    stageNum = num
+                    if (readStage()) break
+                }
+            }
+        }
+    }
+
+    fun getInputForMove() {
         var buf = ""
         ansi.locateCursor(1, 15)
         print("WASD: ")
