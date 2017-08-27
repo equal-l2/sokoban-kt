@@ -4,13 +4,19 @@ package main
 
 fun main(args: Array<String>) {
     Sokoban.selectStage()
-    while (true) {
-        Sokoban.printAllCells()
-        if (Sokoban.isCleared()) break
-        Sokoban.getInputForMove()
-        Sokoban.movePlayer()
+    while(true){
+        while (true) {
+            Sokoban.printAllCells()
+            if (Sokoban.isCleared()) break
+            Sokoban.getInputForMove()
+            Sokoban.movePlayer()
+        }
+        println("\nCongratulations!")
+        Sokoban.nextStage()
+        println("Press Enter Key to proceed")
+        println("Press Ctrl+D to abort")
+        if(readLine() == null) kotlin.system.exitProcess(0)
     }
-    println("\nCongratulations!")
 }
 
 object Sokoban {
@@ -126,9 +132,14 @@ object Sokoban {
             stage = Stage.fromFile("map/$stageNum.map")
             return true;
         } catch (e: java.io.FileNotFoundException) {
-            println("map/$stageNum.map was not found")
             return false;
         }
+    }
+
+    fun nextStage() {
+        if (stageNum == Int.MAX_VALUE) kotlin.system.exitProcess(0)
+        stageNum += 1
+        if(!readStage()) kotlin.system.exitProcess(0)
     }
 
     fun selectStage() {
@@ -145,6 +156,7 @@ object Sokoban {
                 } else {
                     stageNum = num
                     if (readStage()) break
+                    else println("map/$stageNum.map was not found")
                 }
             }
         }
