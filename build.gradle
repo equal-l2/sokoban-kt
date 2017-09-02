@@ -10,6 +10,9 @@ repositories{
 
 dependencies {
   compile 'org.jetbrains.kotlin:kotlin-stdlib'
+  compile 'com.badlogicgames.gdx:gdx:1.9.6'
+  compile 'com.badlogicgames.gdx:gdx-backend-lwjgl3:1.9.6'
+  compile 'com.badlogicgames.gdx:gdx-platform:1.9.6:natives-desktop'
 }
 
 task wrapper(type: Wrapper) {
