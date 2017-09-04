@@ -24,7 +24,7 @@ object GUIInterface : ApplicationAdapter() {
         RIGHT,
         LEFT
     }
-    val tilePixel = 16
+    val tilePixel = 32
     lateinit var map: TiledMap
     lateinit var renderer: OrthogonalTiledMapRenderer
     lateinit var camera: OrthographicCamera
@@ -87,7 +87,8 @@ object GUIInterface : ApplicationAdapter() {
 
     override fun create() {
         camera = OrthographicCamera()
-        camera.setToOrtho(false, 20f, 20f)
+        camera.setToOrtho(false, 30f, 30f)
+        camera.translate(-5f, -2f)
         camera.update()
         tiles = TextureRegion.split(Texture(Gdx.files.internal("data/tile.png")), tilePixel, tilePixel)
         Gdx.input.setInputProcessor(
