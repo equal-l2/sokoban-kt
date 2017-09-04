@@ -36,7 +36,7 @@ object CUIInterface {
 
     fun readStage(): Boolean {
         try {
-            engine.readStage("map/$stageNum.map")
+            engine.readStage("data/map/$stageNum.map")
             return true
         } catch (e: java.io.FileNotFoundException) {
             return false
