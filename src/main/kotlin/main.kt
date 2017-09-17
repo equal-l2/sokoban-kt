@@ -13,6 +13,7 @@ import com.badlogic.gdx.maps.tiled.TiledMap
 import com.badlogic.gdx.maps.tiled.TiledMapTileLayer
 import com.badlogic.gdx.maps.tiled.renderers.OrthogonalTiledMapRenderer
 import com.badlogic.gdx.maps.tiled.tiles.StaticTiledMapTile
+import com.badlogic.gdx.math.Vector3
 import sokoban.Sokoban
 
 /* ktlint-disable no-multi-spaces */
@@ -24,13 +25,14 @@ object GUIInterface : ApplicationAdapter() {
         RIGHT,
         LEFT
     }
-    val tilePixel = 32
+    const val tilePixel = 32 // Tiles are square
+    const val windowPixel = 480 // Window is square
     lateinit var map: TiledMap
     lateinit var renderer: OrthogonalTiledMapRenderer
     lateinit var camera: OrthographicCamera
     lateinit var tiles: Array<Array<TextureRegion>>
     var engine = Sokoban()
-    var stageNum = 1
+    var stageNum = 2
     var playerDirection = Direction.UP
 
     fun readStage(): Boolean {
@@ -82,7 +84,12 @@ object GUIInterface : ApplicationAdapter() {
         }
         map = TiledMap()
         map.getLayers().add(layer)
-        renderer = OrthogonalTiledMapRenderer(map, 1/10f)
+        renderer = OrthogonalTiledMapRenderer(map)
+        camera.position.set(Vector3(
+                0.5f*engine.stage.x*tilePixel,
+                0.5f*engine.stage.y*tilePixel,
+                0f
+        ))
     }
 
     override fun create() {
@@ -120,7 +127,10 @@ object GUIInterface : ApplicationAdapter() {
                     }
                 }
         )
+        camera = OrthographicCamera()
+        camera.setToOrtho(false, 1f*windowPixel, 1f*windowPixel)
         readStage()
+        camera.update()
     }
 
     override fun render() {
