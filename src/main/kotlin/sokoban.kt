@@ -11,7 +11,7 @@ class Sokoban {
         init {
             x = map[0].size
             y = map.size
-            if (map.any { a -> a.size != x }) {
+            if (map.any { it.size != x }) {
                 throw IllegalArgumentException("y differs. map:${map.size} y:$y")
             }
 
@@ -50,7 +50,7 @@ class Sokoban {
         companion object {
             fun fromFile(fileName: String): Stage {
                 val mapFile = java.io.File(fileName).readLines()
-                return Stage(mapFile.map { y -> y.map { x -> Character.getNumericValue(x) }.toTypedArray() }.toTypedArray())
+                return Stage(mapFile.map { it.map { Character.getNumericValue(it) }.toTypedArray() }.toTypedArray())
             }
             // stage objects are described as bit flags.
             // 0b0000 (0): empty
@@ -76,7 +76,7 @@ class Sokoban {
     var moveY = 0
     var moveCrate = false
 
-    fun isCleared() = !stage.map.any { y -> y.any { x -> (x == Stage.CRATE) } }
+    fun isCleared() = !stage.map.any { it.any { it == Stage.CRATE } }
 
     fun readStage(fileName: String) {
         stage = Stage.fromFile(fileName)
