@@ -95,8 +95,7 @@ object GUIInterface : ApplicationAdapter() {
                 layer.setCell(x, engine.stage.y-1-y, cell)
             }
         }
-        map = TiledMap()
-        map.getLayers().add(layer)
+        map = TiledMap().apply { getLayers().add(layer) }
         renderer = OrthogonalTiledMapRenderer(map)
         camera.position.set(Vector3(
             0.5f*engine.stage.x*tilePixel,
@@ -106,11 +105,13 @@ object GUIInterface : ApplicationAdapter() {
     }
 
     fun makeButton(name: String): Button {
-        var style = Button.ButtonStyle()
-        style.down = SpriteDrawable(Sprite(Texture(Gdx.files.internal("data/button/${name}_down.png"))))
-        style.up = SpriteDrawable(Sprite(Texture(Gdx.files.internal("data/button/${name}_up.png"))))
-        style.disabled = SpriteDrawable(Sprite(Texture(Gdx.files.internal("data/button/${name}_disabled.png"))))
-        return Button(style)
+        return Button(
+            Button.ButtonStyle().apply {
+                down = SpriteDrawable(Sprite(Texture(Gdx.files.internal("data/button/${name}_down.png"))))
+                up = SpriteDrawable(Sprite(Texture(Gdx.files.internal("data/button/${name}_up.png"))))
+                disabled = SpriteDrawable(Sprite(Texture(Gdx.files.internal("data/button/${name}_disabled.png"))))
+            }
+        )
     }
 
     override fun create() {
@@ -121,37 +122,42 @@ object GUIInterface : ApplicationAdapter() {
         tiles = TextureRegion.split(Texture(Gdx.files.internal("data/tile.png")), tilePixel, tilePixel)
 
         // Prepare buttons
-        resetButton = makeButton("reset")
-        resetButton.addListener(
-            object : ChangeListener() {
-                override fun changed(e: ChangeEvent, a: Actor) { readStage() }
-            }
-        )
+        resetButton = makeButton("reset").apply {
+            addListener(
+                object : ChangeListener() {
+                    override fun changed(e: ChangeEvent, a: Actor) { readStage() }
+                }
+            )
+        }
 
-        prevButton = makeButton("prev")
-        prevButton.addListener(
-            object : ChangeListener() {
-                override fun changed(e: ChangeEvent, a: Actor) { stageNum -= 1; readStage() }
-            }
-        )
+        prevButton = makeButton("prev").apply {
+            addListener(
+                object : ChangeListener() {
+                    override fun changed(e: ChangeEvent, a: Actor) { stageNum -= 1; readStage() }
+                }
+            )
+        }
 
-        nextButton = makeButton("next")
-        nextButton.addListener(
-            object : ChangeListener() {
-                override fun changed(e: ChangeEvent, a: Actor) { stageNum += 1; readStage() }
-            }
-        )
+        nextButton = makeButton("next").apply {
+            addListener(
+                object : ChangeListener() {
+                    override fun changed(e: ChangeEvent, a: Actor) { stageNum += 1; readStage() }
+                }
+            )
+        }
 
         // Prepare table
-        var table = Table().left().top()
-        table.add(resetButton).pad(10f)
-        table.add(prevButton).pad(10f)
-        table.add(nextButton).pad(10f)
-        table.setFillParent(true)
+        var table = Table().left().top().apply {
+            add(resetButton).pad(10f)
+            add(prevButton).pad(10f)
+            add(nextButton).pad(10f)
+            setFillParent(true)
+        }
 
         // Prepare stage
-        stage = Stage()
-        stage.addActor(table)
+        stage = Stage().apply {
+            addActor(table)
+        }
 
         Gdx.input.setInputProcessor(InputMultiplexer(
             stage,
@@ -185,8 +191,9 @@ object GUIInterface : ApplicationAdapter() {
         ))
 
         // Prepare camera
-        camera = OrthographicCamera()
-        camera.setToOrtho(false, 1f*windowPixel, 1f*windowPixel)
+        camera = OrthographicCamera().apply {
+            setToOrtho(false, 1f*windowPixel, 1f*windowPixel)
+        }
 
         // Read stage
         // Tile, Buttons, and camera are needed for readStage()
@@ -206,9 +213,10 @@ object GUIInterface : ApplicationAdapter() {
 }
 
 fun main(args: Array<String>) {
-    var config = Lwjgl3ApplicationConfiguration()
-    config.setTitle("Sokoban")
-    config.setWindowedMode(480, 480)
-    config.setResizable(false)
+    var config = Lwjgl3ApplicationConfiguration().apply {
+        setTitle("Sokoban")
+        setWindowedMode(480, 480)
+        setResizable(false)
+    }
     Lwjgl3Application(GUIInterface, config)
 }
