@@ -20,8 +20,11 @@ import com.badlogic.gdx.scenes.scene2d.Actor
 import com.badlogic.gdx.scenes.scene2d.Stage
 import com.badlogic.gdx.scenes.scene2d.ui.Button
 import com.badlogic.gdx.scenes.scene2d.ui.Table
+import com.badlogic.gdx.scenes.scene2d.ui.Label
 import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener
 import com.badlogic.gdx.scenes.scene2d.utils.SpriteDrawable
+import com.badlogic.gdx.graphics.g2d.BitmapFont
+import com.badlogic.gdx.graphics.Color
 import sokoban.Sokoban
 
 /* ktlint-disable no-multi-spaces */
@@ -40,6 +43,7 @@ object GUIInterface : ApplicationAdapter() {
     lateinit var nextButton: Button
     lateinit var prevButton: Button
     lateinit var resetButton: Button
+    lateinit var congrats: Label
     lateinit var renderer: OrthogonalTiledMapRenderer
     lateinit var stage: Stage
     lateinit var tiles: Array<Array<TextureRegion>>
@@ -58,6 +62,8 @@ object GUIInterface : ApplicationAdapter() {
             prevButton.setDisabled(
                     stageNum == 1 || !java.io.File(stageStr(stageNum-1)).exists()
             )
+
+            congrats.setVisible(engine.isCleared())
             return true
         } catch (e: java.io.FileNotFoundException) {
             return false
@@ -146,11 +152,18 @@ object GUIInterface : ApplicationAdapter() {
             )
         }
 
+        // Prepare message
+        congrats = Label(
+            "Congratulations!\n<= Click here to proceed to the next stage.",
+            Label.LabelStyle(BitmapFont(), Color.FIREBRICK as Color)
+        ).apply { setVisible(false) }
+
         // Prepare table
-        var table = Table().left().top().apply {
+        val table = Table().left().top().apply {
             add(resetButton).pad(10f)
             add(prevButton).pad(10f)
             add(nextButton).pad(10f)
+            add(congrats).pad(10f)
             setFillParent(true)
         }
 
@@ -163,6 +176,7 @@ object GUIInterface : ApplicationAdapter() {
             stage,
             object : InputAdapter () {
                 override fun keyDown(keyCode: Int) : Boolean {
+                    if (engine.isCleared()) return true
                     when (keyCode) {
                         Input.Keys.LEFT  -> {
                             engine.moveX = -1
@@ -185,6 +199,7 @@ object GUIInterface : ApplicationAdapter() {
 
                     engine.movePlayer()
                     updateMap()
+                    congrats.setVisible(engine.isCleared())
                     return true
                 }
             }
