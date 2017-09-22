@@ -48,7 +48,7 @@ object GUIInterface : ApplicationAdapter() {
     lateinit var stage: Stage
     lateinit var tiles: Array<Array<TextureRegion>>
     var engine = Sokoban()
-    var stageNum = 2
+    var stageNum = 1
     var playerDirection = Direction.UP
 
     fun readStage(): Boolean {
@@ -103,11 +103,14 @@ object GUIInterface : ApplicationAdapter() {
         }
         map = TiledMap().apply { getLayers().add(layer) }
         renderer = OrthogonalTiledMapRenderer(map)
-        camera.position.set(Vector3(
-            0.5f*engine.stage.x*tilePixel,
-            0.5f*engine.stage.y*tilePixel,
-            0f
-        ))
+        camera.apply {
+            position.set(Vector3(
+                0.5f*engine.stage.x*tilePixel,
+                0.5f*engine.stage.y*tilePixel,
+                0f
+            ))
+            update()
+        }
     }
 
     fun makeButton(name: String): Button {
@@ -213,8 +216,6 @@ object GUIInterface : ApplicationAdapter() {
         // Read stage
         // Tile, Buttons, and camera are needed for readStage()
         readStage()
-
-        camera.update()
     }
 
     override fun render() {
