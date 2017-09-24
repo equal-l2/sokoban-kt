@@ -9,7 +9,11 @@ repositories{
 }
 
 dependencies {
-  compile "org.jetbrains.kotlin:kotlin-stdlib"
+  compile 'org.jetbrains.kotlin:kotlin-stdlib'
+}
+
+task wrapper(type: Wrapper) {
+  gradleVersion = '4.2'
 }
 
 jar {
