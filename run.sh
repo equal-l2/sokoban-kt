@@ -1,2 +1,2 @@
 #!/bin/sh
-gradle && java -XstartOnFirstThread -jar sokoban-kt.jar
+./gradlew && java -jar sokoban-kt.jar
