@@ -1,11 +1,6 @@
 # sokoban-kt
 
-## Prerequisites
-- gradle
-- Terminal with support for ANSI escape sequences
-
-## How to run
-```sh
-$ gradle
-$ java -jar sokoban-kt.jar
-```
+## How to build and run
+Run `run_mac.sh` on macOS.  
+Run `run.sh` on \*nix.  
+Run `run.bat` on Windows.  
