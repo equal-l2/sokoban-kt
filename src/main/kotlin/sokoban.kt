@@ -12,9 +12,10 @@ class Sokoban {
             x = map[0].size
             y = map.size
             if (map.any { it.size != x }) {
-                throw IllegalArgumentException("y differs. map:${map.size} y:$y")
+                throw IllegalArgumentException("x differs. map:${map.size} x:$x")
             }
 
+            /* count dests, player, and crates */
             var cntDest   = 0
             var cntPlayer = 0
             var cntCrate  = 0
@@ -34,6 +35,8 @@ class Sokoban {
                     }
                 }
             }
+
+            /* verify stage */
             if (cntDest < 1) {
                 throw IllegalArgumentException("Dest should be 1 at least. dest:$cntDest")
             }
@@ -48,6 +51,7 @@ class Sokoban {
             }
         }
         companion object {
+            // Construct Stage object from file
             fun fromFile(fileName: String): Stage {
                 val mapFile = java.io.File(fileName).readLines()
                 return Stage(mapFile.map { it.map { Character.getNumericValue(it) }.toTypedArray() }.toTypedArray())
