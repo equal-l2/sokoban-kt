@@ -96,11 +96,12 @@ class Sokoban {
                 (toObj == Stage.WALL)          /* you are in rock */
         ) return false
 
+        // if a crate exists on toObj
         if (toObj and Stage.CRATE != 0) {
-            if (objIsPlayer) {
+            if (objIsPlayer) { // The player can move a crate
                 moveCrate = true
                 return canMove(toX, toY, false)
-            } else {
+            } else { // A crate cannot move the other crate
                 return false
             }
         }
@@ -112,14 +113,20 @@ class Sokoban {
         val toY = stage.playerY + moveY
         if (canMove(stage.playerX, stage.playerY, true)) {
             if (moveCrate) {
+                // Move a crate
                 stage.map[toY][toX] = stage.map[toY][toX] and Stage.CRATE.inv()
                 stage.map[toY + moveY][toX + moveX] = stage.map[toY + moveY][toX + moveX] or Stage.CRATE
             }
+            // Move the player
             stage.map[stage.playerY][stage.playerX] = stage.map[stage.playerY][stage.playerX] and Stage.PLAYER.inv()
             stage.map[toY][toX] = stage.map[toY][toX] or Stage.PLAYER
+
+            // Set player's x and y
             stage.playerX = toX
             stage.playerY = toY
         }
+
+        // Reset vars
         moveX = 0
         moveY = 0
         moveCrate = false
