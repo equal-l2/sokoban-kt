@@ -51,6 +51,7 @@ object GUIInterface : ApplicationAdapter() {
     var stageNum = 1
     var playerDirection = Direction.UP
 
+    // Read stage and set buttons' states
     fun readStage(): Boolean {
         val stageStr = { n: Int -> "data/map/$n.map" }
         try {
@@ -70,6 +71,7 @@ object GUIInterface : ApplicationAdapter() {
         }
     }
 
+    // Generate map instance from engine's stage data
     fun updateMap() {
         var layer = TiledMapTileLayer(engine.stage.x, engine.stage.y, tilePixel, tilePixel)
         for (y in 0 until engine.stage.y) {
@@ -113,6 +115,7 @@ object GUIInterface : ApplicationAdapter() {
         }
     }
 
+    // Utility function for making a button
     fun makeButton(name: String): Button {
         return Button(
             Button.ButtonStyle().apply {
@@ -155,29 +158,31 @@ object GUIInterface : ApplicationAdapter() {
             )
         }
 
-        // Prepare message
+        // Prepare congrats message
         congrats = Label(
             "Congratulations!\n<= Click here to proceed to the next stage.",
             Label.LabelStyle(BitmapFont(), Color.FIREBRICK as Color)
         ).apply { setVisible(false) }
 
-        // Prepare table
-        val table = Table().left().top().apply {
-            add(resetButton).pad(10f)
-            add(prevButton).pad(10f)
-            add(nextButton).pad(10f)
-            add(congrats).pad(10f)
-            setFillParent(true)
-        }
-
         // Prepare stage
         stage = Stage().apply {
-            addActor(table)
+            addActor(
+                // Set layout
+                Table().left().top().apply {
+                    add(resetButton).pad(10f)
+                    add(prevButton).pad(10f)
+                    add(nextButton).pad(10f)
+                    add(congrats).pad(10f)
+                    setFillParent(true)
+                }
+            )
         }
 
+        // Prepare input processor
+        // It must be multiplexed to handle both buttons and keys
         Gdx.input.setInputProcessor(InputMultiplexer(
             stage,
-            object : InputAdapter () {
+            object : InputAdapter () { // key handler
                 override fun keyDown(keyCode: Int) : Boolean {
                     if (engine.isCleared()) return true
                     when (keyCode) {
@@ -213,13 +218,14 @@ object GUIInterface : ApplicationAdapter() {
             setToOrtho(false, 1f*windowPixel, 1f*windowPixel)
         }
 
-        // Read stage
         // Tile, Buttons, and camera are needed for readStage()
         readStage()
     }
 
     override fun render() {
+        // Set background color
         Gdx.gl.glClearColor(1f, 1f, 1f, 1f)
+
         Gdx.gl.glClear(GL30.GL_COLOR_BUFFER_BIT)
         camera.update()
         renderer.setView(camera)
