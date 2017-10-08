@@ -4,8 +4,8 @@ import com.badlogic.gdx.Gdx
 import com.badlogic.gdx.Input
 import com.badlogic.gdx.InputAdapter
 import com.badlogic.gdx.InputMultiplexer
-import com.badlogic.gdx.backends.lwjgl3.Lwjgl3Application
-import com.badlogic.gdx.backends.lwjgl3.Lwjgl3ApplicationConfiguration
+import com.badlogic.gdx.backends.lwjgl.LwjglApplication
+import com.badlogic.gdx.backends.lwjgl.LwjglApplicationConfiguration
 import com.badlogic.gdx.graphics.GL30
 import com.badlogic.gdx.graphics.OrthographicCamera
 import com.badlogic.gdx.graphics.Texture
@@ -235,10 +235,12 @@ object GUIInterface : ApplicationAdapter() {
 }
 
 fun main(args: Array<String>) {
-    var config = Lwjgl3ApplicationConfiguration().apply {
-        setTitle("Sokoban")
-        setWindowedMode(480, 480)
-        setResizable(false)
+    var config = LwjglApplicationConfiguration().apply {
+        title = "Sokoban"
+        width = 480
+        height = 480
+        resizable = false
+        allowSoftwareMode = true
     }
-    Lwjgl3Application(GUIInterface, config)
+    LwjglApplication(GUIInterface, config)
 }

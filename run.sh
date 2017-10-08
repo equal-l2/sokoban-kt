@@ -1,2 +1,2 @@
 #!/bin/sh
-./gradlew && java -jar sokoban-kt.jar
+./gradlew && java -jar build/libs/sokoban-kt.jar

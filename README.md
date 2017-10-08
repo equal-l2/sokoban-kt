@@ -5,7 +5,6 @@
 - OpenGL support (No preparation is needed on almost all environment. Needed by libGDX)
 
 ## How to build and run
-Run `run_mac.sh` on macOS.  
 Run `run.sh` on \*nix.  
 Run `run.bat` on Windows.  
 
