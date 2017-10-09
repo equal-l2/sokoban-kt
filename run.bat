@@ -1,1 +1,1 @@
-gradlew && java -jar build\libs\sokoban-kt.jar
+gradlew.bat && java -jar build\libs\sokoban-kt.jar
