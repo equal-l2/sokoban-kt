@@ -1,5 +1,5 @@
 plugins {
-  id 'org.jetbrains.kotlin.jvm' version '1.1.4-3'
+  id 'org.jetbrains.kotlin.jvm' version '1.1.51'
 }
 
 repositories{
@@ -10,9 +10,9 @@ defaultTasks 'jar'
 
 dependencies {
   compile 'org.jetbrains.kotlin:kotlin-stdlib'
-  compile 'com.badlogicgames.gdx:gdx:1.9.6'
-  compile 'com.badlogicgames.gdx:gdx-backend-lwjgl:1.9.6'
-  compile 'com.badlogicgames.gdx:gdx-platform:1.9.6:natives-desktop'
+  compile 'com.badlogicgames.gdx:gdx:1.9.7'
+  compile 'com.badlogicgames.gdx:gdx-backend-lwjgl:1.9.7'
+  compile 'com.badlogicgames.gdx:gdx-platform:1.9.7:natives-desktop'
 }
 
 task wrapper(type: Wrapper) {
