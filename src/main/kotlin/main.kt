@@ -100,7 +100,7 @@ object GUIInterface : ApplicationAdapter() {
                             -> tiles[0][3]
                     }
                 ))
-                layer.setCell(x, engine.stage.y-1-y, cell)
+                layer.setCell(x, engine.stage.y - y - 1, cell)
             }
         }
         map = TiledMap().apply { getLayers().add(layer) }
@@ -183,7 +183,7 @@ object GUIInterface : ApplicationAdapter() {
         Gdx.input.setInputProcessor(InputMultiplexer(
             stage,
             object : InputAdapter () { // key handler
-                override fun keyDown(keyCode: Int) : Boolean {
+                override fun keyDown(keyCode: Int): Boolean {
                     if (engine.isCleared()) return true
                     when (keyCode) {
                         Input.Keys.LEFT  -> {

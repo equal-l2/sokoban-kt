@@ -1,6 +1,5 @@
 package sokoban
 /* ktlint-disable no-multi-spaces */
-/* ktlint-disable no-wildcard-imports */
 
 class Sokoban {
     class Stage(var map: Array<Array<Int>>) {
