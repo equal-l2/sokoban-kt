@@ -50,10 +50,10 @@ class Sokoban {
             }
         }
         companion object {
-            // Construct Stage object from file
-            fun fromFile(fileName: String): Stage {
-                val mapFile = java.io.File(fileName).readLines()
-                return Stage(mapFile.map { it.map { Character.getNumericValue(it) }.toTypedArray() }.toTypedArray())
+            // Construct Stage object from reader
+            fun fromReader(rdr: java.io.Reader): Stage {
+                val mapContents = rdr.readLines()
+                return Stage(mapContents.map { it.map { Character.getNumericValue(it) }.toTypedArray() }.toTypedArray())
             }
             // stage objects are described as bit flags.
             // 0b0000 (0): empty
@@ -81,8 +81,8 @@ class Sokoban {
 
     fun isCleared() = !stage.map.any { it.any { it == Stage.CRATE } }
 
-    fun readStage(fileName: String) {
-        stage = Stage.fromFile(fileName)
+    fun readStage(rdr: java.io.Reader) {
+        stage = Stage.fromReader(rdr)
     }
 
     fun canMove(x: Int, y: Int, objIsPlayer: Boolean): Boolean {

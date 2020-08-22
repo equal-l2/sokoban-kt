@@ -52,23 +52,19 @@ object GUIInterface : ApplicationAdapter() {
     var playerDirection = Direction.UP
 
     // Read stage and set buttons' states
-    fun readStage(): Boolean {
-        val stageStr = { n: Int -> "data/map/$n.map" }
-        try {
-            engine.readStage(stageStr(stageNum))
-            updateMap()
-            nextButton.setDisabled(
-                    stageNum == Int.MAX_VALUE || !java.io.File(stageStr(stageNum+1)).exists()
-            )
-            prevButton.setDisabled(
-                    stageNum == 1 || !java.io.File(stageStr(stageNum-1)).exists()
-            )
+    fun readStage() {
+        val stageFile = { n: Int -> Gdx.files.internal("maps/$n.map") }
 
-            congrats.setVisible(engine.isCleared())
-            return true
-        } catch (e: java.io.FileNotFoundException) {
-            return false
-        }
+        engine.readStage(stageFile(stageNum).reader())
+        updateMap()
+        nextButton.setDisabled(
+            stageNum == Int.MAX_VALUE || !stageFile(stageNum+1).exists()
+        )
+        prevButton.setDisabled(
+            stageNum == 1 || !stageFile(stageNum-1).exists()
+        )
+
+        congrats.setVisible(engine.isCleared())
     }
 
     // Generate map instance from engine's stage data
@@ -119,9 +115,9 @@ object GUIInterface : ApplicationAdapter() {
     fun makeButton(name: String): Button {
         return Button(
             Button.ButtonStyle().apply {
-                down = SpriteDrawable(Sprite(Texture(Gdx.files.internal("data/button/${name}_down.png"))))
-                up = SpriteDrawable(Sprite(Texture(Gdx.files.internal("data/button/${name}_up.png"))))
-                disabled = SpriteDrawable(Sprite(Texture(Gdx.files.internal("data/button/${name}_disabled.png"))))
+                down = SpriteDrawable(Sprite(Texture(Gdx.files.internal("button/${name}_down.png"))))
+                up = SpriteDrawable(Sprite(Texture(Gdx.files.internal("button/${name}_up.png"))))
+                disabled = SpriteDrawable(Sprite(Texture(Gdx.files.internal("button/${name}_disabled.png"))))
             }
         )
     }
@@ -131,7 +127,7 @@ object GUIInterface : ApplicationAdapter() {
         camera.setToOrtho(false, 30f, 30f)
         camera.translate(-5f, -2f)
         camera.update()
-        tiles = TextureRegion.split(Texture(Gdx.files.internal("data/tile.png")), tilePixel, tilePixel)
+        tiles = TextureRegion.split(Texture(Gdx.files.internal("tile.png")), tilePixel, tilePixel)
 
         // Prepare buttons
         resetButton = makeButton("reset").apply {
